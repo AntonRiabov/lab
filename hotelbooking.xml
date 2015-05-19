@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<hotel-booking>
+    <BookingID>12</BookingID>
+    <ClientName>clientName</ClientName>
+    <HotelName>hotelName</HotelName>
+    <Aarrival>aarrival</Aarrival>
+    <Departue>departue</Departue>
+</hotel-booking>

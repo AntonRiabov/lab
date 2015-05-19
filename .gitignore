@@ -1,0 +1,15 @@
+## Directory-based project format
+.idea/
+## File-based project format
+*.ipr
+*.iws
+*.iml
+
+## Additional for IntelliJ
+out/
+target/
+classes/
+tmp/
+temp/
+
+.idea_modules/

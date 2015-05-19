@@ -1,0 +1,18 @@
+-- Table: "HotelBooking"
+
+-- DROP TABLE "HotelBooking";
+
+CREATE TABLE "HotelBooking"
+(
+  "BookingID" integer NOT NULL,
+  "ClientName" character varying,
+  "HotelName" character varying,
+  "Aarrival" date,
+  "Departue" date,
+  CONSTRAINT "HotelBooking_pkey" PRIMARY KEY ("BookingID")
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "HotelBooking"
+  OWNER TO postgres;
