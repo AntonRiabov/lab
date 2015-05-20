@@ -2,6 +2,7 @@ package com.kripton.arithm;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * Created by paladii on 12.05.2015.
@@ -173,8 +174,6 @@ public class BigNumber {
             m = bDigits.length / 2;
         }
 
-        //    A * B = A0 * B0 + (( A0 + A1 ) * ( B0 + B1 ) — A0 * B0 — A1 * B1 ) * BASEm + A1 * B1 * BASE2 * m
-
         BigNumber A0plA1 ;
         BigNumber B0plB1;
         BigNumber A1xB1;
@@ -244,7 +243,7 @@ public class BigNumber {
     public static void main(String[] args) {
 //        BigNumber bigNumber = new BigNumber(new int[]{123423, 2134231, 21341423, 2342134, 234, 2346345, 756865, 445677, 89});
 //        BigNumber bigNumber2 = new BigNumber(new int[]{123423, 2134231, 21341423, 2342134, 234, 2346345, 756865, 445677, 89});
-        BigNumber bigNumber = new BigNumber("89000044567000756865002346345000000234002342134021341423002134231000123423");
+        BigNumber bigNumber = new BigNumber("8900004456700075686500234634500000890000445670007568650023463450000089000044567000756865002346345000000234002342134021341423002134231000123423");
         BigNumber bigNumber2 = new BigNumber("89000044567000756865002346345000000234002342134021341423002134231000123423");
 
 //        System.out.println(bigNumber);
@@ -254,7 +253,7 @@ public class BigNumber {
         System.out.println("-----------------------");
 //
 //        System.out.println(bigNumber);
-        BigInteger bigInteger = new BigInteger(new StringBuilder("89000044567000756865002346345000000234002342134021341423002134231000123423").reverse().toString());
+        BigInteger bigInteger = new BigInteger(new StringBuilder("8900004456700075686500234634500000890000445670007568650023463450000089000044567000756865002346345000000234002342134021341423002134231000123423").reverse().toString());
         BigInteger bigInteger2 = new BigInteger(new StringBuilder("89000044567000756865002346345000000234002342134021341423002134231000123423").reverse().toString());
 //        System.out.println(bigInteger);
 //        System.out.println(bigInteger2);
@@ -263,7 +262,7 @@ public class BigNumber {
 //        System.out.println(bigInteger.add(bigInteger).equals(new BigInteger(bigNumber.add(bigNumber2).toString())));
 //        int[] gg = new int[];
 //        System.out.println((long)Integer.MAX_VALUE + Integer.MAX_VALUE);
-        System.out.println(new BigNumber(new int[]{2}).multiply(new int[]{2}, new int[]{2}, new int[]{2}));
+        System.out.println(Arrays.toString(new BigNumber(new int[]{2}).multiply(new int[]{2}, new int[]{2}, new int[]{2})));
     }
 
     @Override
