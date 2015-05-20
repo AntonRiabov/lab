@@ -19,6 +19,9 @@ public class BigNumber {
 
     public int[] add(int[] result, int[] b, int start, int end) {
         int buf = 0;
+        for (int i = end; i < digits.length; i++) {
+            result[ i ] = digits[ i ];
+        }
         for (int i = start; i < end; ++i) {
             buf = digits[i] + b[i] + buf;
             result[i] = buf % MOD;
@@ -66,7 +69,7 @@ public class BigNumber {
     }
 
     public int[] multiply(int[] result, int[] a, int[] b) {
-        return a.length > b.length ? multiply(result, 0, a, 0, a.length - 1, b, 0, b.length - 1) : multiply(result, 0, b, 0, b.length - 1, a, 0, a.length - 1);
+        return a.length > b.length ? multiply(result, 0, a, 0, a.length, b, 0, b.length ) : multiply(result, 0, b, 0, b.length, a, 0, a.length);
     }
 
     public int[] multiply(int[] result, int resultStart, int[] a, int aStart, int aEnd, int[] b, int bStart, int bEnd) {
@@ -75,8 +78,8 @@ public class BigNumber {
 
         int positionCounter = 0;
 
-        for (int i = bStart; i <= bEnd; i++) {
-            for (int j = aStart, shift = i + resultStart; j <= aEnd; j++) {
+        for (int i = bStart; i < bEnd; i++) {
+            for (int j = aStart, shift = i + resultStart; j < aEnd; j++) {
                 multiplyBuf = (long) a[j] * b[i];
                 addBuf = multiplyBuf % MOD;
 
@@ -146,20 +149,89 @@ public class BigNumber {
             }
             result[resultStart + i] += a[aPosition] - b[bPosition];
         }
+        for (int i = bEnd - bStart; i < aEnd ; i++) {
+            result[ i ] += a[ i ];
+        }
         return result;
     }
 
+//    A * B = A0 * B0 + (( A0 + A1 ) * ( B0 + B1 ) — A0 * B0 — A1 * B1 ) * BASEm + A1 * B1 * BASE2 * m
     public BigNumber karazuba(BigNumber b) {
         int[] bDigits = b.getDigits();
-        int[] result = new int[bDigits.length + digits.length + 1];
+        int[] aDigits = digits;
+        int[] result = new int[bDigits.length + aDigits.length + 1];
+        boolean aBigger = false;
         int m = 0;
-        if (bDigits.length > digits.length) {
-            m = digits.length / 2;
+
+        if (bDigits.length > aDigits.length) {
+            m = aDigits.length / 2;
+            int[] swap = aDigits;
+            aDigits = bDigits;
+            bDigits = aDigits;
+
+        } else {
+            m = bDigits.length / 2;
         }
 
-        return null;
-    }
+        //    A * B = A0 * B0 + (( A0 + A1 ) * ( B0 + B1 ) — A0 * B0 — A1 * B1 ) * BASEm + A1 * B1 * BASE2 * m
 
+        BigNumber A0plA1 ;
+        BigNumber B0plB1;
+        BigNumber A1xB1;
+        BigNumber A0xB0;
+//        int[] A0xB0 = new int[ m * 2 ];
+//        this.multiply(A0xB0, 0, aDigits, 0, m, bDigits, 0, m);
+//        add(result, )
+        int[] A0arr = new int[m];
+        int[] B0arr = new int[m];
+        int[] A1arr = new int[aDigits.length - m];
+        int[] B1arr = new int[bDigits.length - m];
+        for (int i = 0; i < m; i++) {
+            A0arr[ i ] = aDigits[ i ];
+            B0arr[ i ] = bDigits[ i ];
+        }
+        BigNumber A0 = new BigNumber(A0arr);
+        BigNumber B0 = new BigNumber(B0arr);
+        for (int i = 0; i < aDigits.length - m; i++) {
+            A1arr[ i ] = aDigits[ i + m];
+        }
+        for (int i = 0; i < bDigits.length - m; i++) {
+            B1arr[ i ] = bDigits[ i + m];
+        }
+        BigNumber A1 = new BigNumber(A1arr);
+        BigNumber B1 = new BigNumber(B1arr);
+
+        A0xB0 = A0.multiply(B0);
+        A1xB1 = A1.multiply(B1);
+        A0plA1 = A1.add(A0);
+        B0plB1 = B1.add(B0);
+        BigNumber A0plA1xB0plB1 = A0plA1.multiply(B0plB1);
+        int[] m11 = new int[m + A0plA1xB0plB1.digits.length];
+        for (int i = m; i < m11.length; i++) {
+            m11[ i ] = A0plA1xB0plB1.digits[ i - m];
+        }
+        BigNumber A0xB0plA1xB1 = A1xB1.add(A0xB0);
+        int[] m12 = new int[m + A0xB0plA1xB1.digits.length];
+        for (int i = m; i < m12.length; i++) {
+            m12[ i ] = A0xB0plA1xB1.digits[ i - m];
+        }
+        BigNumber M11 = new BigNumber(m11);
+        BigNumber M12 = new BigNumber(m12);
+
+
+//        BigNumber A0plA1xB0plB1_minus_A0xB0plA1xB1 = A0plA1xB0plB1.sub(A0xB0plA1xB1);
+//        int[] m1 = new int[m + A0plA1xB0plB1_minus_A0xB0plA1xB1.digits.length];
+//        for (int i = m; i < m1.length; i++) {
+//            m1[ i ] = A0plA1xB0plB1_minus_A0xB0plA1xB1.digits[ i - m];
+//        }
+        int[] m2 = new int[m * 2 + A1xB1.digits.length];
+        for (int i = m*2; i < m2.length; i++) {
+            m2[ i ] = A1xB1.digits[ i - m*2];
+        }
+        BigNumber M2 = new BigNumber(m2);
+//        BigNumber M1 = new BigNumber(m1);
+        return M2.add(A0xB0).add(M11).sub(M12);
+    }
 
     private int[] getDigits() {
         return digits;
@@ -175,18 +247,18 @@ public class BigNumber {
         BigNumber bigNumber = new BigNumber("89000044567000756865002346345000000234002342134021341423002134231000123423");
         BigNumber bigNumber2 = new BigNumber("89000044567000756865002346345000000234002342134021341423002134231000123423");
 
-        System.out.println(bigNumber);
-        System.out.println(bigNumber2);
+//        System.out.println(bigNumber);
+//        System.out.println(bigNumber2);
 
-        System.out.println(bigNumber.sub(bigNumber2));
+        System.out.println(bigNumber.karazuba(bigNumber2));
         System.out.println("-----------------------");
 //
 //        System.out.println(bigNumber);
         BigInteger bigInteger = new BigInteger(new StringBuilder("89000044567000756865002346345000000234002342134021341423002134231000123423").reverse().toString());
         BigInteger bigInteger2 = new BigInteger(new StringBuilder("89000044567000756865002346345000000234002342134021341423002134231000123423").reverse().toString());
-        System.out.println(bigInteger);
-        System.out.println(bigInteger2);
-        System.out.println(bigInteger2.subtract(bigInteger));
+//        System.out.println(bigInteger);
+//        System.out.println(bigInteger2);
+        System.out.println(bigInteger2.multiply(bigInteger));
 //        System.out.println(bigNumber.add(bigNumber2));
 //        System.out.println(bigInteger.add(bigInteger).equals(new BigInteger(bigNumber.add(bigNumber2).toString())));
 //        int[] gg = new int[];
