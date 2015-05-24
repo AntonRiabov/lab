@@ -156,6 +156,8 @@ public class BigNumber {
         return result;
     }
 
+
+
 //    A * B = A0 * B0 + (( A0 + A1 ) * ( B0 + B1 ) — A0 * B0 — A1 * B1 ) * BASEm + A1 * B1 * BASE2 * m
     public BigNumber karazuba(BigNumber b) {
         int[] bDigits = b.getDigits();
@@ -280,10 +282,36 @@ public class BigNumber {
         return stringBuilder.toString();
     }
 
+    public BigNumber barreta(BigNumber x, BigNumber n){
+
+
+
+
+        return null;
+    }
+    public static int compare(BigNumber a, BigNumber b){
+//        0 - a = b
+//        1 - a > b
+//        2- a < b
+        if (a.getDigits().length > b.getDigits().length){
+            return 1;
+        } else if(a.getDigits().length < b.getDigits().length){
+            return 2;
+        } else {
+            for (int i = a.getDigits().length - 1; i >= 0; --i) {
+                if (a.getDigits()[i] != b.getDigits()[i]) {
+                    if (a.getDigits()[i] > b.getDigits()[i]) return 1;
+                    else return 2;
+                }
+            }
+            if (a.getDigits()[0] == b.getDigits()[0]) return 0;
+        }
+        return 0;
+    }
+
     public BigNumber(String input) {
-        String[] arr = input.split("(?<=\\G.........)");
+        String[] arr = input.split(PARSE_EXP);
         digits = new int[arr.length];
-//        StringBuilder builder = new StringBuilder();
 //        herf kbwj
         for (int i = 0; i < arr.length; i++) {
             digits[i] = Integer.parseInt(new StringBuilder(arr[i]).reverse().toString());
